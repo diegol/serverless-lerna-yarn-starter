@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "A TypeScript starter for Serverless Framework",
   "main": "handler.js",
-  "scripts": {
-    "test": "serverless-bundle test"
-  },
+  "scripts": {},
   "author": "",
   "license": "MIT",
   "repository": {
@@ -17,7 +15,14 @@
     "@types/jest": "^26.0.14",
     "serverless-bundle": "3.2.1",
     "serverless-dotenv-plugin": "^3.0.0",
-    "serverless-offline": "^6.8.0"
+    "serverless-offline": "^6.8.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.3.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@nestjs/common": "^7.6.5",
+    "@nestjs/core": "^7.6.5",
+    "@nestjs/platform-express": "^7.6.5",
+    "class-validator": "^0.12.2"
+  }
 }

@@ -30,3 +30,14 @@ functions:
       - http:
           path: hello
           method: get
+
+
+custom:
+  bundle:
+       externals: 
+         - class-transformer
+         - '@nestjs/microservices'
+         - 'cache-manager'
+         - '@nestjs/microservices/microservices-module'
+         - '@nestjs/websockets/socket-module'
+
