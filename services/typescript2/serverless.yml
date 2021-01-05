@@ -34,10 +34,11 @@ functions:
 
 custom:
   bundle:
-       externals: 
+      externals: 
          - class-transformer
          - '@nestjs/microservices'
          - 'cache-manager'
          - '@nestjs/microservices/microservices-module'
          - '@nestjs/websockets/socket-module'
+      packager: yarn 
 
