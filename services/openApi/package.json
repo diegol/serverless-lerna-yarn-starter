@@ -1,0 +1,37 @@
+{
+  "name": "serverless-typescript-starter",
+  "version": "0.1.0",
+  "description": "A TypeScript starter for Serverless Framework",
+  "main": "handler.js",
+  "scripts": {},
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnomalyInnovations/serverless-typescript-starter.git"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.64",
+    "@types/jest": "^26.0.14",
+    "prettier": "^2.2.1",
+    "serverless-bundle": "3.2.1",
+    "serverless-dotenv-plugin": "^3.0.0",
+    "serverless-jetpack": "^0.10.7",
+    "serverless-localstack": "^0.4.28",
+    "serverless-offline": "^6.8.0",
+    "serverless-plugin-include-dependencies": "^4.1.0",
+    "serverless-plugin-tree-shake": "^1.1.5",
+    "serverless-webpack": "^5.3.5",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "@nestjs/common": "^7.6.5",
+    "@nestjs/core": "^7.6.5",
+    "@nestjs/platform-fastify": "^7.6.5",
+    "class-transformer": "^0.3.1",
+    "class-validator": "^0.12.2",
+    "csv-writer": "^1.6.0",
+    "nest-csv-parser": "^2.0.4",
+    "s3-streams": "^0.4.0"
+  }
+}
