@@ -1,7 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 const serverlessConfiguration: AWS = {
-  service: 'serverless-lerna-yarn-typescript',
+  service: 'serverless-lerna-yarn-typescript1',
   frameworkVersion: '2',
   custom: {
     webpack: {
