@@ -1,0 +1,16 @@
+local:
+  openAiBucket: "http://localhost:4566"
+  accessKeyId: "test"
+  secretAccessKey: "test"
+
+dev:
+  openAiBucket: "https://s3.ap-southeast-1.amazonaws.com"
+  secureTest: ${ssm:secureTest~true}
+
+customerSanbox:
+  openAiBucket: "https://s3.ap-southeast-1.amazonaws.com"
+  secureTest: ${ssm:secureTest~true}
+
+production:
+  openAiBucket: "https://s3.ap-southeast-1.amazonaws.com"
+  secureTest: ${ssm:secureTest~true}

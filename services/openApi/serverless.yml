@@ -1,21 +1,20 @@
-# NOTE: update this with your service name
-service: serverless-typescript-starter
+#service: serverless-typescript-starter
+service: hey-yabble
 
 # Create an optimized package for our functions
 package:
   individually: true
 
-plugins:
-  - serverless-offline
-  - serverless-dotenv-plugin
-  - serverless-bundle
-
 provider:
   name: aws
   runtime: nodejs12.x
   stage: ${opt:stage,'local'}
+  profile: customerSandbox
+  tracing: true
   logRetentionInDays: 14
-  region: us-east-1
+  region: ap-southeast-1
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -27,40 +26,50 @@ provider:
         - s3:*
       Resource:
         - "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: "*"
+    - Effect: "Allow" # xray permissions (required)
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
   # To load environment variables externally
   # rename env.example to .env and uncomment
   # the following line. Also, make sure to not
   # commit your .env.
   #
   environment:
-    OPEN_AI_BUCKET: ${self:custom.environment.openAiBucket}
-    ACCESS_KEY_ID: ${self:custom.environment.accessKeyId}
-    SECRET_ACCESS_KEY: ${self:custom.environment.secretAccessKey}
+    AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
+    AWS_XRAY_LOG_LEVEL: silent
+    #OPEN_AI_BUCKET: ${self:custom.environment.openAiBucket}
+    OPEN_AI_BUCKET: ${self:custom.environment.${self:provider.stage}.openAiBucket}
+    INTERNAL_BUCKET: "hey-yabble-dev-internal-bucket"
+    #ACCESS_KEY_ID: ${self:custom.environment.accessKeyId}
+    #SECRET_ACCESS_KEY: ${self:custom.environment.secretAccessKey}
+    #SECURE_TEST: ${self:custom.environment.${self:provider.stage}.secureTest}
+
     ENV: ${self:provider.stage}
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - http:
-          path: hello
-          method: get
+  responseProcesor:
+    handler: handler.responseProcesor
+    timeout: 900
   summary:
     handler: handler.summary
-  # search:
-  #   handler: search.main
-  #   events:
-  #     - http:
-  #         path: openapi/search
-  #         method: get
-
-  # complete:
-  #   handler: complete.main
-  #   events:
-  #     - http:
-  #         path: openapi/complte
-  #         method: get
+    timeout: 900
+    # layers:
+    #   - arn:aws:lambda:us-east-1:580247275435:layer:LambdaInsightsExtension:14
+    events:
+      - http:
+          path: openapi/summary
+          method: get
 custom:
-  environment: ${file(./config/environment.${self:provider.stage}.yml)}
+  environment: ${file(./config/environment.yml)}
   bundle:
     externals:
       - class-transformer
@@ -84,3 +93,22 @@ custom:
     docker:
       # Enable this flag to run "docker ..." commands as sudo
       sudo: False
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    openAIresponseProcesorTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: openAIResponseProcesor
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+  - serverless-bundle
+  - serverless-plugin-tracing

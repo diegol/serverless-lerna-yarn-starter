@@ -22,13 +22,24 @@ export class ConfigurationService {
     
   };
   */
+  // @IsEmail()
+  // @IsNotEmpty()
+  // public max_tokens = 255;
+
+  // @IsNotEmpty()
+  // public temperature = 0.1;
+  // public top_p = 0.9;
+  // public frequency_penalty = 0.9;
+  // public presence_penalty = 0;
+  // public best_of = 1;
+
   @IsEmail()
   @IsNotEmpty()
-  public max_tokens = 255;
+  public max_tokens = 436;
 
   @IsNotEmpty()
   public temperature = 0.3;
-  public top_p = 0.6;
+  public top_p = 1;
   public frequency_penalty = 0.9;
   public presence_penalty = 0;
   public best_of = 1;

@@ -6,19 +6,14 @@ export class SummaryTemplateService {
     console.log("getPrompt");
     let responseString = "";
     for (const response of responses) {
-      responseString += `Answers:
+      responseString += `
         """${response}
         """
         `;
     }
 
-    return `Read each of the following answers, and then answer the following questions:
+    return `Read the following text and then provide a summary of the most important parts:
     ${responseString}
-    Questions:
-    """
-    1. Add up the number of times price is mentioned in each answer. How many times in total is price mentioned? What are they saying about price?
-    2. Why do customers feel that they are getting fair value everyday when they shop at New World? Give examples.
-    3. Why do customers not feel they are getting fair value everyday when they shop at New World? Give examples.
-    Answers:`;
+    Summary:`;
   }
 }

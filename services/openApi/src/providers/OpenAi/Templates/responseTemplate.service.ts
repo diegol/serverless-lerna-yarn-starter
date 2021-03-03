@@ -8,13 +8,15 @@ export class ResponseTemplateService {
       responseString += `${response}\n`;
     }
     return `Read these survey responses and then answer the following questions:
-    """
-    ${responseString}
-    """
-    Questions:
-    1. How many times do customers mention price? What are they saying about price?
-    2. Why do customers feel that they are getting fair value everyday when they shop at New World? Give examples.
-    3. Why do customers not feel they are getting fair value everyday when they shop at New World? Give examples.
-    Answers:`;
+"""
+${responseString}"""
+Given the above statements, answer the following questions:
+
+1. In your opinion, how could Farmers improve their range of products?
+2. In your opinion, what additional products should Farmers be offering?
+3. In your opinion, which departments in Farmers should be offering a wider range?
+4. In your opinion, what extra range of products should those departments be selling?
+
+Answers:`;
   }
 }

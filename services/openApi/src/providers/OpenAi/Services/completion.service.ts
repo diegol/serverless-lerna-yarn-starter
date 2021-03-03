@@ -18,6 +18,16 @@ export class CompletionService {
   ) {}
 
   async getResponses(prompt: string): any {
+    console.log("CompletionService:getResponses:start");
+    /*
+    return {
+      choices: [
+        {
+          text: "texttttt",
+        },
+      ],
+    };
+    */
     const headersRequest = this.getHeaders();
 
     // const dataC = { prompt: prompt, max_tokens: 458, temperature: 0.1 };
@@ -39,7 +49,7 @@ export class CompletionService {
         map((response) => response.data),
         catchError((error) => {
           //throw new HttpException
-          console.log("errrororororor", error);
+          console.log("errrorororororrrrrrr", error);
           console.log(error.response.data, error.response.status);
           throw new HttpException(error.response.data, error.response.status);
         })

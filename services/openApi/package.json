@@ -20,7 +20,7 @@
     "serverless-localstack": "^0.4.28",
     "serverless-offline": "^6.8.0",
     "serverless-plugin-include-dependencies": "^4.1.0",
-    "serverless-plugin-tree-shake": "^1.1.5",
+    "serverless-plugin-tracing": "^2.0.0",
     "serverless-webpack": "^5.3.5",
     "typescript": "^3.9.7"
   },
@@ -28,10 +28,12 @@
     "@nestjs/common": "^7.6.5",
     "@nestjs/core": "^7.6.5",
     "@nestjs/platform-fastify": "^7.6.5",
+    "aws-xray-sdk": "^3.2.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "csv-writer": "^1.6.0",
     "nest-csv-parser": "^2.0.4",
-    "s3-streams": "^0.4.0"
+    "s3-streams": "^0.4.0",
+    "serverless": "^2.22.0"
   }
 }
