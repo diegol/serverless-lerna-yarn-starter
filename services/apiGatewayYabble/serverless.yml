@@ -1,0 +1,78 @@
+service: api-gateway-yabble
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-southeast-1
+  stage: ${opt:stage,'local'}
+  #profile: customerSandbox
+  logRetentionInDays: 14
+
+  environment:
+    AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
+    AWS_XRAY_LOG_LEVEL: silent
+    JWT_SECRET: ${self:custom.environment.${self:provider.stage}.jwtSecret}
+    ENV: ${self:provider.stage}
+
+functions:
+  authorizer:
+    handler: authorizer.handler
+
+custom:
+  environment: ${file(./config/environment.yml)}
+
+resources:
+  Resources:
+    YabbleGW:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ${self:service}-${self:provider.stage}-yabble
+
+    AuthorizerPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName:
+          Fn::GetAtt: AuthorizerLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal:
+          Fn::Join: ["", ["apigateway.", { Ref: "AWS::URLSuffix" }]]
+    Authorizer:
+      DependsOn:
+        - YabbleGW
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: ${self:provider.stage}-Authorizer
+        RestApiId: { "Ref": "YabbleGW" }
+        Type: TOKEN
+        IdentitySource: method.request.header.Authorization
+        IdentityValidationExpression: Bearer (.*)
+        AuthorizerResultTtlInSeconds: 0
+        AuthorizerUri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: "AWS::Region"
+              - ":lambda:path/2015-03-31/functions/"
+              - Fn::GetAtt: "AuthorizerLambdaFunction.Arn"
+              - "/invocations"
+
+  Outputs:
+    apiGatewayRestApiId:
+      Value:
+        Ref: YabbleGW
+      Export:
+        Name: ${self:service}-${self:provider.stage}-yabble-restApiId
+
+    apiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - YabbleGW
+          - RootResourceId
+      Export:
+        Name: ${self:service}-${self:provider.stage}-yabble-rootResourceId
+
+    authorizerId:
+      Value:
+        Ref: Authorizer
+      Export:
+        Name: ${self:service}-${self:provider.stage}-AuthorizerId

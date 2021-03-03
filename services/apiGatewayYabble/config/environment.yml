@@ -1,0 +1,13 @@
+local:
+  jwtSecret: lkyl7l#$1qRT()sdf6&$fasf!@#$aDFRGTY6UJfF#
+customerSanbox:
+  jwtSecret: lkyl7l#$1qRT()sdf6&$fasf!@#$aDFRGTY6UJfF#
+dev:
+  secureTest: ${ssm:secureTest~true}
+  jwtSecret: lkyl7l#$1qRT()sdf6&$fasf!@#$aDFRGTY6UJfF#
+staging:
+  jwtSecret: lkyl7l#$1qRT()sdf6&$fasf!@#$aDFRGTY6UJfF#
+dmitrii:
+  jwtSecret: lkyl7l#$1qRT()sdf6&$fasf!@#$aDFRGTY6UJfF#
+production:
+  jwtSecret: f3%FgUDSFSFWET#^5h2Ko)dzxaSD$2sdcbgPPr$!
