@@ -1,0 +1,109 @@
+# NOTE: update this with your service name
+service: get-presigned-url
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage,'local'}
+  #profile: customerSandbox
+  logRetentionInDays: 14
+  region: ap-southeast-1
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - "*"
+
+    - Effect: "Allow" # xray permissions (required)
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+
+  # Next lines enable same api gateway usage but different cloudformation stacks
+  apiGateway:
+    restApiId:
+      #Fn::ImportValue: authorizer-stack-${self:provider.stage}-restApiId
+      Fn::ImportValue: "api-gateway-yabble-${self:provider.stage}-yabble-restApiId"
+    restApiRootResourceId:
+      #Fn::ImportValue: authorizer-stack-${self:provider.stage}-rootResourceId
+      Fn::ImportValue: "api-gateway-yabble-${self:provider.stage}-yabble-rootResourceId"
+
+  # To load environment variables externally
+  # rename env.example to .env and uncomment
+  # the following line. Also, make sure to not
+  # commit your .env.
+  #
+  environment:
+    AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
+    AWS_XRAY_LOG_LEVEL: silent
+    EXPORT_BUCKET: ${self:custom.environment.${self:provider.stage}.exportBucket}
+    #ACCESS_KEY_ID: ${self:custom.environment.accessKeyId}
+    #SECRET_ACCESS_KEY: ${self:custom.environment.secretAccessKey}
+    #SECURE_TEST: ${self:custom.environment.${self:provider.stage}.secureTest}
+    ENV: ${self:provider.stage}
+functions:
+  getPresignedURL:
+    handler: presignedUrl.handler
+    events:
+      - http:
+          path: /exports/presigned-urls
+          method: get
+          origin: "*" # <-- Specify allowed origin
+          headers: # <-- Specify allowed headers
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-CSRF-TOKEN
+            - X-SOCKET-ID
+            - x-requested-with
+            - X-CSRF-TOKEN
+            - x-requested-with
+            - access-control-allow-origin
+
+              #X-CSRF-TOKEN,X-SOCKET-ID,x-requested-with,Access-Control-Allow-Headers,access-control-allow-origin
+          authorizer:
+            type: CUSTOM
+            authorizerId: !ImportValue api-gateway-yabble-${self:provider.stage}-AuthorizerId
+custom:
+  environment: ${file(./config/environment.yml)}
+  bundle:
+    externals:
+      - class-transformer
+      - "@nestjs/microservices"
+      - "cache-manager"
+      - "@nestjs/microservices/microservices-module"
+      - "@nestjs/websockets/socket-module"
+    packager: yarn
+    linting: false
+    stats: true
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - local
+    host: http://localhost # optional - LocalStack host to connect to
+    edgePort: 4566 # optional - LocalStack edge port to connect to
+    autostart: true # optional - start LocalStack in Docker on Serverless deploy
+    lambda:
+      # Enable this flag to improve performance
+      mountCode: True
+    docker:
+      # Enable this flag to run "docker ..." commands as sudo
+      sudo: False
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+  - serverless-bundle
+  - serverless-plugin-tracing
